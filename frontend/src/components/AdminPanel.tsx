@@ -41,6 +41,31 @@ export default function AdminPanel() {
     setActiveTab('overview');
   };
 
+  const handleEdit = (item: any, type: string) => {
+    setEditingItem(item);
+    setEditingType(type);
+  };
+
+  const handleAdd = (type: string) => {
+    setEditingItem(null);
+    setEditingType(type);
+    setShowAddModal(true);
+  };
+
+  const handleItemSave = async (formData: any) => {
+    const success = await handleSave(editingType, editingItem?.id, formData);
+    if (success) {
+      setEditingItem(null);
+      setEditingType('');
+      setShowAddModal(false);
+    }
+  };
+
+  const handleItemDelete = async (item: any, type: string) => {
+    const success = await handleDelete(type, item.id);
+    return success;
+  };
+
   const story = storyData?.story;
 
   return (
