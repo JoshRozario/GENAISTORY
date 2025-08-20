@@ -132,24 +132,36 @@ export default function AdminPanel() {
                     />
                   )}
                   {activeTab === 'characters' && (
-                    <div className="text-center text-gray-500 py-8">
-                      Character management coming soon...
-                    </div>
+                    <CharacterManagement
+                      characters={story.characters}
+                      onEdit={(character) => handleEdit(character, 'characters')}
+                      onDelete={(character) => handleItemDelete(character, 'characters')}
+                      onAdd={() => handleAdd('characters')}
+                    />
                   )}
                   {activeTab === 'inventory' && (
-                    <div className="text-center text-gray-500 py-8">
-                      Inventory management coming soon...
-                    </div>
+                    <InventoryManagement
+                      inventory={story.inventory}
+                      onEdit={(item) => handleEdit(item, 'inventory')}
+                      onDelete={(item) => handleItemDelete(item, 'inventory')}
+                      onAdd={() => handleAdd('inventory')}
+                    />
                   )}
                   {activeTab === 'goals' && (
-                    <div className="text-center text-gray-500 py-8">
-                      Goals management coming soon...
-                    </div>
+                    <GoalsManagement
+                      goals={story.goals}
+                      onEdit={(goal) => handleEdit(goal, 'goals')}
+                      onDelete={(goal) => handleItemDelete(goal, 'goals')}
+                      onAdd={() => handleAdd('goals')}
+                    />
                   )}
                   {activeTab === 'beats' && (
-                    <div className="text-center text-gray-500 py-8">
-                      Story beats management coming soon...
-                    </div>
+                    <BeatsManagement
+                      beats={story.beats}
+                      onEdit={(beat) => handleEdit(beat, 'beats')}
+                      onDelete={(beat) => handleItemDelete(beat, 'beats')}
+                      onAdd={() => handleAdd('beats')}
+                    />
                   )}
                   {activeTab === 'state' && (
                     <div className="bg-white p-6 rounded-lg border border-gray-200">
