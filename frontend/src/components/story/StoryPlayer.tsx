@@ -131,7 +131,7 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
                 onChange={(e) => setPlayerInput(e.target.value)}
                 placeholder="What do you do next?"
                 disabled={isGenerating}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                className="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               />
               <button
                 type="submit"
