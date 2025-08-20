@@ -17,6 +17,9 @@ type AdminTab = 'overview' | 'characters' | 'inventory' | 'goals' | 'beats' | 's
 export default function AdminPanel() {
   const [selectedStoryId, setSelectedStoryId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingType, setEditingType] = useState<string>('');
+  const [showAddModal, setShowAddModal] = useState(false);
   
   const { data: storiesData, loading: storiesLoading } = useFetch<{ stories: Story[] }>('/api/stories');
   const { data: storyData, loading: storyLoading, refetch } = useFetch<{ story: Story }>(
@@ -26,6 +29,8 @@ export default function AdminPanel() {
   const {
     isLoading: isActionLoading,
     error: actionError,
+    handleSave,
+    handleDelete,
     handleExport,
     handleReset,
     handleDeleteStory,
