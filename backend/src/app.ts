@@ -3,6 +3,8 @@ import cors from 'cors';
 import healthRouter from './routes/health';
 import eventsRouter from './routes/events';
 import storiesRouter from './routes/stories';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export function createApp() {
   const app = express();
