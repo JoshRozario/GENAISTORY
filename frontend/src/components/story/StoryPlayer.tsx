@@ -84,7 +84,7 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 p-4">
+        <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{story.title}</h1>
@@ -100,8 +100,8 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="max-w-4xl mx-auto space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 pb-0">
+          <div className="max-w-4xl mx-auto space-y-4 pb-4">
             {story.conversationHistory.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
@@ -115,8 +115,8 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
           </div>
         </div>
 
-        {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 p-4">
+        {/* Input Area - Sticky at bottom */}
+        <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
           <div className="max-w-4xl mx-auto space-y-4">
             <ActionSuggestions
               actions={suggestedActions}
