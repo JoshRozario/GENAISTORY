@@ -76,11 +76,13 @@ export class StateUpdater {
     const changes: InventoryItem[] = [];
     const contentLower = content.toLowerCase();
     
-    // Detect item acquisition
+    // Detect item acquisition - more specific patterns to avoid false positives
     const acquisitionPatterns = [
-      /you (?:find|discover|pick up|take|grab|acquire) (?:a |an |the )?([^,.!?]+)/gi,
-      /you (?:are given|receive|obtain) (?:a |an |the )?([^,.!?]+)/gi,
-      /(?:a |an |the )?([^,.!?]+) (?:appears?|materializes?) in your (?:hand|inventory|pack)/gi
+      /you (?:find|discover|pick up|take|grab|acquire) (?:a |an |the )?([a-zA-Z\s\-]+)(?:\s+(?:from|in|on|under|behind))/gi,
+      /you (?:are given|receive|obtain) (?:a |an |the )?([a-zA-Z\s\-]+)(?:\s+(?:from|by))/gi,
+      /(?:a |an |the )?([a-zA-Z\s\-]+) (?:appears?|materializes?) in your (?:hand|inventory|pack|bag|pouch)/gi,
+      /you (?:purchase|buy) (?:a |an |the )?([a-zA-Z\s\-]+)/gi,
+      /you (?:loot|find) (?:a |an |the )?([a-zA-Z\s\-]+) (?:among|in|inside)/gi
     ];
     
     acquisitionPatterns.forEach(pattern => {
@@ -115,10 +117,17 @@ export class StateUpdater {
       }
     });
     
-    // Detect item loss
+    // Detect item loss and usage
     const lossPatterns = [
-      /you (?:lose|drop|break|destroy|give away|hand over) (?:your |the )?([^,.!?]+)/gi,
-      /(?:your |the )?([^,.!?]+) (?:breaks?|shatters?|disappears?|is (?:lost|stolen|destroyed))/gi
+      /you (?:lose|drop|break|destroy|give away|hand over) (?:your |the )?([a-zA-Z\s\-]+)/gi,
+      /(?:your |the )?([a-zA-Z\s\-]+) (?:breaks?|shatters?|disappears?|is (?:lost|stolen|destroyed))/gi
+    ];
+    
+    // Detect item usage/consumption
+    const usagePatterns = [
+      /you (?:use|consume|drink|eat|activate) (?:your |the )?([a-zA-Z\s\-]+)/gi,
+      /you (?:apply|pour|sprinkle) (?:your |the )?([a-zA-Z\s\-]+)/gi,
+      /(?:your |the )?([a-zA-Z\s\-]+) is (?:used up|consumed|depleted|empty)/gi
     ];
     
     lossPatterns.forEach(pattern => {
@@ -135,6 +144,30 @@ export class StateUpdater {
               ...existingItem,
               quantity: Math.max(0, existingItem.quantity - 1)
             });
+          }
+        });
+      }
+    });
+    
+    // Process usage patterns (for consumables)
+    usagePatterns.forEach(pattern => {
+      const matches = content.match(pattern);
+      if (matches) {
+        matches.forEach(match => {
+          const itemName = this.extractUsageItemName(match);
+          const existingItem = story.inventory.find(item => 
+            item.name.toLowerCase().includes(itemName.toLowerCase())
+          );
+          
+          if (existingItem && existingItem.quantity > 0) {
+            // Only consume if it's a consumable type
+            if (existingItem.type === 'consumable') {
+              changes.push({
+                ...existingItem,
+                quantity: Math.max(0, existingItem.quantity - 1)
+              });
+            }
+            // For non-consumables, track usage without removing (tools, keys, etc.)
           }
         });
       }
@@ -330,12 +363,48 @@ export class StateUpdater {
 
   private extractItemName(match: string): string {
     // Extract the actual item name from the regex match
-    return match.replace(/you (?:find|discover|pick up|take|grab|acquire|lose|drop|break|destroy|give away|hand over) (?:a |an |the |your )?/gi, '').trim();
+    let itemName = match
+      .replace(/you (?:find|discover|pick up|take|grab|acquire|lose|drop|break|destroy|give away|hand over|purchase|buy|loot|are given|receive|obtain) (?:a |an |the |your )?/gi, '')
+      .replace(/(?:appears?|materializes?) in your (?:hand|inventory|pack|bag|pouch)/gi, '')
+      .replace(/(?:\s+(?:from|in|on|under|behind|by|among|inside)).*$/gi, '') // Remove location/source info
+      .trim();
+    
+    // Clean up any remaining artifacts
+    itemName = itemName.replace(/^(?:a |an |the )/gi, '').trim();
+    
+    return itemName;
+  }
+
+  private extractUsageItemName(match: string): string {
+    // Extract item name from usage patterns
+    let itemName = match
+      .replace(/you (?:use|consume|drink|eat|activate|apply|pour|sprinkle) (?:your |the )?/gi, '')
+      .replace(/is (?:used up|consumed|depleted|empty)/gi, '')
+      .trim();
+    
+    // Clean up any remaining artifacts
+    itemName = itemName.replace(/^(?:a |an |the |your )/gi, '').trim();
+    
+    return itemName;
   }
 
   private isValidItem(itemName: string): boolean {
-    // Simple validation - reject very short or very long names
-    return itemName.length > 2 && itemName.length < 50 && /^[a-zA-Z\s]+$/.test(itemName);
+    // Enhanced validation to avoid false positives
+    if (itemName.length < 2 || itemName.length > 50) return false;
+    if (!/^[a-zA-Z\s\-]+$/.test(itemName)) return false;
+    
+    // Filter out common non-item phrases that match patterns
+    const blacklistedPhrases = [
+      'slow sip', 'quick look', 'deep breath', 'long glance', 'careful step',
+      'moment', 'second', 'minute', 'hour', 'day', 'night', 'time',
+      'breath', 'sip', 'drink', 'look', 'glance', 'step', 'walk', 'run',
+      'word', 'words', 'sentence', 'phrase', 'sound', 'noise',
+      'chance', 'opportunity', 'moment to think', 'pause', 'rest',
+      'thought', 'idea', 'feeling', 'sense', 'impression'
+    ];
+    
+    const itemLower = itemName.toLowerCase().trim();
+    return !blacklistedPhrases.some(phrase => itemLower.includes(phrase));
   }
 
   private guessItemType(itemName: string): 'weapon' | 'tool' | 'consumable' | 'key' | 'misc' {

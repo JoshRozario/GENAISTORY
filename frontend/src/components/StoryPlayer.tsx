@@ -6,6 +6,13 @@ interface StoryPlayerProps {
   onBack: () => void;
 }
 
+interface ConversationMessage {
+  id: string;
+  type: 'player' | 'ai';
+  content: string;
+  timestamp: string;
+}
+
 interface PlayerView {
   title: string;
   description: string;
@@ -14,7 +21,7 @@ interface PlayerView {
   knownCharacters: any[];
   inventory: any[];
   activeGoals: any[];
-  recentStory: string[];
+  conversationHistory: ConversationMessage[];
 }
 
 export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
@@ -23,26 +30,63 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
   const [showInventory, setShowInventory] = useState(false);
   const [showCharacters, setShowCharacters] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
-  const [storyHistory, setStoryHistory] = useState<string[]>([]);
+  const [conversationHistory, setConversationHistory] = useState<ConversationMessage[]>([]);
+  const [suggestedActions, setSuggestedActions] = useState<string[]>([]);
   const storyEndRef = useRef<HTMLDivElement>(null);
 
   const { data: storyData, loading, error, refetch } = useFetch<{ story: PlayerView }>(`/api/stories/${storyId}`);
 
-  useEffect(() => {
-    if (storyData?.story.recentStory) {
-      setStoryHistory(storyData.story.recentStory);
+  // Extract suggested actions from the latest AI message
+  const extractSuggestedActions = (content: string): string[] => {
+    const lines = content.split('\n');
+    const actions: string[] = [];
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Look for lines starting with dash, bullet, or numbered options
+      if (trimmed.match(/^[-•*]\s+/) || trimmed.match(/^\d+[\.)]\s+/)) {
+        // Extract the action text, removing the prefix
+        const action = trimmed.replace(/^[-•*]\s+/, '').replace(/^\d+[\.)]\s+/, '').trim();
+        if (action && action.length > 0) {
+          actions.push(action);
+        }
+      }
     }
-  }, [storyData]);
+    
+    return actions.slice(0, 4); // Limit to 4 actions to avoid clutter
+  };
+
+  useEffect(() => {
+    if (storyData?.story.conversationHistory) {
+      const history = storyData.story.conversationHistory;
+      setConversationHistory(history);
+      
+      // Extract suggested actions from the most recent AI message
+      const lastAiMessage = [...history].reverse().find(msg => msg.type === 'ai');
+      if (lastAiMessage && !isGenerating) {
+        const actions = extractSuggestedActions(lastAiMessage.content);
+        setSuggestedActions(actions);
+      }
+    }
+  }, [storyData, isGenerating]);
 
   useEffect(() => {
     // Auto-scroll to bottom when new content is added
     storyEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [storyHistory]);
+  }, [conversationHistory]);
 
-  const handleContinueStory = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleQuickAction = async (action: string) => {
+    if (isGenerating) return;
     
-    if (!playerInput.trim() || isGenerating) return;
+    setPlayerInput(action);
+    setSuggestedActions([]); // Clear suggestions once user picks one
+    
+    // Submit the action immediately
+    await submitAction(action);
+  };
+
+  const submitAction = async (inputText: string) => {
+    if (!inputText.trim() || isGenerating) return;
     
     setIsGenerating(true);
     
@@ -52,19 +96,14 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ playerInput: playerInput.trim() }),
+        body: JSON.stringify({ playerInput: inputText.trim() }),
       });
       
       if (response.ok) {
         const result = await response.json();
         
-        // Add the new content to history
-        if (result.generatedContent) {
-          setStoryHistory(prev => [...prev, result.generatedContent]);
-        }
-        
         setPlayerInput('');
-        refetch(); // Refresh the story data
+        refetch(); // Refresh the story data to get updated conversation history
       } else {
         console.error('Failed to continue story');
       }
@@ -73,6 +112,12 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleContinueStory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuggestedActions([]); // Clear suggestions when user types custom input
+    await submitAction(playerInput);
   };
 
   if (loading) {
@@ -135,25 +180,48 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
           <div className="bg-white rounded-lg shadow">
             {/* Story Content */}
             <div className="p-6 min-h-96 max-h-96 overflow-y-auto bg-gray-50 rounded-t-lg">
-              {storyHistory.length === 0 ? (
+              {conversationHistory.length === 0 ? (
                 <div className="text-gray-500 italic text-center py-8">
                   Your adventure is about to begin...
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {storyHistory.map((segment, index) => (
+                  {conversationHistory.map((message) => (
                     <div
-                      key={index}
-                      className="prose prose-sm max-w-none text-gray-800 leading-relaxed"
+                      key={message.id}
+                      className={`flex ${message.type === 'player' ? 'justify-end' : 'justify-start'}`}
                     >
-                      {segment.split('\n').map((paragraph, pIndex) => (
-                        <p key={pIndex} className="mb-3">
-                          {paragraph}
-                        </p>
-                      ))}
-                      {index < storyHistory.length - 1 && (
-                        <hr className="my-4 border-gray-200" />
-                      )}
+                      <div
+                        className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+                          message.type === 'player'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white text-gray-800 border border-gray-200'
+                        }`}
+                      >
+                        {message.type === 'ai' ? (
+                          <div className="prose prose-sm max-w-none leading-relaxed">
+                            {message.content.split('\n').map((paragraph, pIndex) => (
+                              <p key={pIndex} className="mb-2 last:mb-0">
+                                {paragraph}
+                              </p>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-sm font-medium">
+                            {message.content}
+                          </div>
+                        )}
+                        
+                        <div
+                          className={`text-xs mt-1 ${
+                            message.type === 'player'
+                              ? 'text-blue-100'
+                              : 'text-gray-500'
+                          }`}
+                        >
+                          {new Date(message.timestamp).toLocaleTimeString()}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -163,6 +231,28 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
             
             {/* Input Area */}
             <div className="p-4 border-t bg-white rounded-b-lg">
+              {/* Suggested Actions */}
+              {suggestedActions.length > 0 && (
+                <div className="mb-4">
+                  <div className="text-xs text-gray-500 mb-2 font-medium">Quick Actions:</div>
+                  <div className="flex flex-wrap gap-2">
+                    {suggestedActions.map((action, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleQuickAction(action)}
+                        disabled={isGenerating}
+                        className="text-sm bg-gray-100 hover:bg-gray-200 disabled:opacity-50 text-gray-700 px-3 py-2 rounded-md border border-gray-300 transition-colors max-w-xs text-left"
+                        title={action}
+                      >
+                        <div className="truncate">
+                          {action.length > 50 ? action.substring(0, 50) + '...' : action}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <form onSubmit={handleContinueStory}>
                 <div className="flex gap-3">
                   <input

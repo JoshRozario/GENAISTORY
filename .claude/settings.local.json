@@ -17,10 +17,9 @@
           {
             "type": "command",
             "command": "git add . && git commit -m \"Auto-commit before Claude changes\""
-
           }
         ]
       }
     ]
   }
-}
+}}

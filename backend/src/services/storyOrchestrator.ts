@@ -221,8 +221,41 @@ export class StoryOrchestrator {
     knownCharacters: any[];
     inventory: any[];
     activeGoals: any[];
-    recentStory: string[];
+    conversationHistory: Array<{
+      id: string;
+      type: 'player' | 'ai';
+      content: string;
+      timestamp: string;
+    }>;
   } {
+    // Build conversation history with alternating player/ai messages
+    const conversationHistory: Array<{
+      id: string;
+      type: 'player' | 'ai';
+      content: string;
+      timestamp: string;
+    }> = [];
+
+    story.storyLog.forEach(segment => {
+      // Add player input if it exists
+      if (segment.playerInput && segment.playerInput.trim() !== '') {
+        conversationHistory.push({
+          id: `${segment.id}-player`,
+          type: 'player',
+          content: segment.playerInput,
+          timestamp: segment.timestamp
+        });
+      }
+      
+      // Add AI response
+      conversationHistory.push({
+        id: `${segment.id}-ai`,
+        type: 'ai',
+        content: segment.content,
+        timestamp: segment.timestamp
+      });
+    });
+
     return {
       title: story.title,
       description: story.description,
@@ -231,7 +264,7 @@ export class StoryOrchestrator {
       knownCharacters: story.characters.filter(char => char.knownToPlayer),
       inventory: story.inventory.filter(item => item.quantity > 0),
       activeGoals: story.goals.filter(goal => goal.knownToPlayer && goal.status === 'active'),
-      recentStory: story.storyLog.slice(-3).map(segment => segment.content)
+      conversationHistory
     };
   }
 
