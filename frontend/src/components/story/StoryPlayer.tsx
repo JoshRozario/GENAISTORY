@@ -16,6 +16,7 @@ interface StoryPlayerProps {
 
 export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
   const [playerInput, setPlayerInput] = useState('');
+  const [pendingMessage, setPendingMessage] = useState<string>('');
   const storyEndRef = useRef<HTMLDivElement>(null);
 
   const { data: storyData, loading, error, refetch } = useFetch<{ story: PlayerView }>(`/api/stories/${storyId}`);
