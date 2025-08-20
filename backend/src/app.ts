@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import healthRouter from './routes/health';
 import eventsRouter from './routes/events';
+import storiesRouter from './routes/stories';
 
 export function createApp() {
   const app = express();
@@ -10,6 +11,7 @@ export function createApp() {
 
   app.use('/api/health', healthRouter);
   app.use('/api/events', eventsRouter);
+  app.use('/api/stories', storiesRouter);
 
   // example health
   app.get('/api', (req, res) => res.json({ ok: true }));

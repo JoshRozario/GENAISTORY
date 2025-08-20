@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mv:*)",
       "Bash(npm install:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []
@@ -15,7 +16,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git add . && git commit -m 'Auto-commit before Claude changes' || true"
+            "command": "git add . && git commit -m \"Auto-commit before Claude changes\""
+
           }
         ]
       }

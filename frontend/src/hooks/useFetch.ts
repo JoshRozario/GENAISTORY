@@ -1,38 +1,53 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
-export function useFetch<T = any>(url: string) {
+export function useFetch<T = any>(url: string | null) {
   const [data, setData] = useState<T | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-      let cancelled = false;
-      setLoading(true);
-      setError(null);
+  const fetchData = useCallback(() => {
+    if (!url) {
+      setLoading(false);
+      return;
+    }
 
-      fetch(url)
-        .then((res) => {
-          if (!res.ok) throw new Error(res.statusText || 'Network error');
-          return res.json();
-        })
-        .then((d) => {
-          if (!cancelled) setData(d as T);
-        })
-        .catch((e: any) => {
-          if (!cancelled) setError(e?.message ?? String(e));
-        })
-        .finally(() => {
-          if (!cancelled) setLoading(false);
-        });
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
 
-      return () => {
-        cancelled = true;
-      };
-    }, [url]);
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) throw new Error(res.statusText || 'Network error');
+        return res.json();
+      })
+      .then((d) => {
+        if (!cancelled) setData(d as T);
+      })
+      .catch((e: any) => {
+        if (!cancelled) setError(e?.message ?? String(e));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-    return { data, loading, error } as {
-      data: T | null;
-      loading: boolean;
-      error: string | null;
+    return () => {
+      cancelled = true;
     };
+  }, [url]);
+
+  useEffect(() => {
+    const cleanup = fetchData();
+    return cleanup;
+  }, [fetchData]);
+
+  const refetch = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch } as {
+    data: T | null;
+    loading: boolean;
+    error: string | null;
+    refetch: () => void;
+  };
 }
