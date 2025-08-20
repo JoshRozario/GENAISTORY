@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import StoryDashboard from './components/StoryDashboard';
-import StoryPlayerRefactored from './components/story/StoryPlayerRefactored';
+import StoryPlayer from './components/story/StoryPlayer';
 import AdminPanel from './components/AdminPanel';
 
 type View = 'dashboard' | 'player' | 'admin';
