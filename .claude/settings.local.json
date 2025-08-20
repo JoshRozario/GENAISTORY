@@ -4,7 +4,8 @@
       "Bash(mv:*)",
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []
@@ -22,4 +23,4 @@
       }
     ]
   }
-}}
+}

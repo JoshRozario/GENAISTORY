@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import StoryDashboard from './components/StoryDashboard';
-import StoryPlayer from './components/StoryPlayer';
+import StoryPlayerRefactored from './components/story/StoryPlayerRefactored';
 import AdminPanel from './components/AdminPanel';
 
 type View = 'dashboard' | 'player' | 'admin';
@@ -81,7 +81,7 @@ export default function App() {
         )}
         
         {currentView === 'player' && currentStoryId && (
-          <StoryPlayer 
+          <StoryPlayerRefactored 
             storyId={currentStoryId} 
             onBack={handleBackToDashboard}
           />
