@@ -1,10 +1,11 @@
 import { ContextPackage, AgentResponse } from '../../../shared/types';
+import { DEEPSEEK_API_KEY } from "../config";
 
 export class StoryGenerator {
   private apiKey: string;
   private baseUrl: string;
 
-  constructor(apiKey: string = process.env.DEEPSEEK_API_KEY || '', provider: 'deepseek' = 'deepseek') {
+  constructor(apiKey: string = DEEPSEEK_API_KEY, provider: 'deepseek' = 'deepseek') {
     this.apiKey = apiKey;
     this.baseUrl = 'https://api.deepseek.com/v1';
   }
