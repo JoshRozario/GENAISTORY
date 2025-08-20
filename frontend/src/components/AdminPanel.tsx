@@ -1,16 +1,16 @@
 // Refactored AdminPanel with proper SOC
 import React, { useState } from 'react';
-import { useFetch } from '../../hooks/useFetch';
-import { useAdminActions } from '../../hooks/admin/useAdminActions';
-import { StorySelector } from './StorySelector';
-import { TabNavigation } from './TabNavigation';
-import { StoryOverview } from './StoryOverview';
-import { LoadingSpinner } from '../ui/LoadingSpinner';
-import type { Story } from '../../types/story';
+import { useFetch } from '../hooks/useFetch';
+import { useAdminActions } from '../hooks/admin/useAdminActions';
+import { StorySelector } from './admin/StorySelector';
+import { TabNavigation } from './admin/TabNavigation'
+import { StoryOverview } from './admin/StoryOverview'
+import { LoadingSpinner } from './ui/LoadingSpinner';
+import type { Story } from '../../src/types/story';
 
 type AdminTab = 'overview' | 'characters' | 'inventory' | 'goals' | 'beats' | 'state';
 
-export default function AdminPanelRefactored() {
+export default function AdminPanel() {
   const [selectedStoryId, setSelectedStoryId] = useState<string>('');
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
   
