@@ -80,7 +80,7 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
   }
 
   return (
-    <div className="flex h-full bg-gray-50 overflow-hidden" style={{ height: 'calc(100vh - 10rem)' }}>
+    <div className="flex bg-gray-50 overflow-hidden" style={{ height: 'calc(100vh - 8rem)' }}>
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-h-0">
         {/* Header */}
