@@ -117,7 +117,7 @@ export class StoryService {
           progress: 0,
           knownToPlayer: true,
           requirements: ['Talk to the barkeep', 'Explore the tavern'],
-          rewards: ['Experience', 'New story path']
+          rewards: ['Experience', 'New story path'],
         }
       ],
       beats: [
@@ -126,6 +126,9 @@ export class StoryService {
           type: 'introduction',
           title: 'Arrival at the Tavern',
           description: 'Player enters the mysterious tavern',
+          completed: true,
+          playerVisible: true,
+          order: 1,
           status: 'completed',
           triggers: ['story_start'],
           consequences: ['meet_barkeep', 'establish_setting']
@@ -135,6 +138,9 @@ export class StoryService {
           type: 'exploration',
           title: 'First Investigation',
           description: 'Player begins to explore and ask questions',
+          completed: false,
+          playerVisible: false,
+          order: 2,
           status: 'pending',
           triggers: ['player_investigates'],
           consequences: ['reveal_clue', 'npc_reaction']

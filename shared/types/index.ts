@@ -23,7 +23,7 @@ export type InventoryItem = {
   id: string;
   name: string;
   description: string;
-  type: 'weapon' | 'tool' | 'consumable' | 'key' | 'misc';
+  type: 'weapon' | 'tool' | 'consumable' | 'key' | 'misc' | 'container';
   quantity: number;
   properties: Record<string, any>;
 };
@@ -35,6 +35,8 @@ export type Goal = {
   status: 'active' | 'completed' | 'failed' | 'hidden';
   progress: number; // 0-100
   knownToPlayer: boolean;
+  requirements?: string[];
+  rewards?: string[];
 };
 
 export type StoryBeat = {

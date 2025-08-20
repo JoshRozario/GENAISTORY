@@ -224,6 +224,25 @@ Player Input → Context Building → AI Generation → Validation → State Upd
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## 🏷️ Technologies Used
+
+**Frontend:**
+- React 18 + TypeScript
+- Vite (build tool)
+- Tailwind CSS 4
+- Jest + Testing Library
+
+**Backend:**
+- Node.js + Express
+- TypeScript
+- File-based JSON storage
+- Jest testing
+
+**AI Integration:**
+- DeepSeek API
+- Multi-agent architecture
+- Context building + validation
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

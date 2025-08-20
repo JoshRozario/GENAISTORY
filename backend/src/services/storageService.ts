@@ -44,7 +44,7 @@ export class StorageService {
       await fs.promises.writeFile(filePath, JSON.stringify(storyData, null, 2), 'utf8');
     } catch (error) {
       console.error(`Failed to save story ${story.id}:`, error);
-      throw new Error(`Failed to save story: ${error.message}`);
+      throw new Error(`Failed to save story: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -68,7 +68,7 @@ export class StorageService {
       return story as Story;
     } catch (error) {
       console.error(`Failed to load story ${storyId}:`, error);
-      throw new Error(`Failed to load story: ${error.message}`);
+      throw new Error(`Failed to load story: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -115,7 +115,7 @@ export class StorageService {
       return true;
     } catch (error) {
       console.error(`Failed to delete story ${storyId}:`, error);
-      throw new Error(`Failed to delete story: ${error.message}`);
+      throw new Error(`Failed to delete story: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -264,7 +264,7 @@ export class StorageService {
       return exportPath;
     } catch (error) {
       console.error(`Failed to export story ${storyId}:`, error);
-      throw new Error(`Failed to export story: ${error.message}`);
+      throw new Error(`Failed to export story: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -300,7 +300,7 @@ export class StorageService {
       return story;
     } catch (error) {
       console.error(`Failed to import story from ${filePath}:`, error);
-      throw new Error(`Failed to import story: ${error.message}`);
+      throw new Error(`Failed to import story: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 }

@@ -16,7 +16,7 @@ export function createApp() {
   app.use('/api/stories', storiesRouter);
 
   // example health
-  app.get('/api', (req, res) => res.json({ ok: true }));
+  app.get('/api', (_req, res) => res.json({ ok: true }));
 
   return app;
 }

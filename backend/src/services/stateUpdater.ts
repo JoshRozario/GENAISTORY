@@ -74,7 +74,7 @@ export class StateUpdater {
    */
   private extractInventoryChanges(content: string, story: Story): InventoryItem[] {
     const changes: InventoryItem[] = [];
-    const contentLower = content.toLowerCase();
+    // const contentLower = content.toLowerCase();
     
     // Detect item acquisition - more specific patterns to avoid false positives
     const acquisitionPatterns = [
@@ -358,7 +358,7 @@ export class StateUpdater {
 
   // Helper methods for extraction logic
   private generateId(): string {
-    return Math.random().toString(36).substr(2, 9);
+    return Math.random().toString(36).substring(2, 11);
   }
 
   private extractItemName(match: string): string {

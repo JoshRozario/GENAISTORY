@@ -5,7 +5,7 @@ export class StoryGenerator {
   private apiKey: string;
   private baseUrl: string;
 
-  constructor(apiKey: string = DEEPSEEK_API_KEY, provider: 'deepseek' = 'deepseek') {
+  constructor(apiKey: string = DEEPSEEK_API_KEY, _provider: 'deepseek' = 'deepseek') {
     this.apiKey = apiKey;
     this.baseUrl = 'https://api.deepseek.com/v1';
   }
