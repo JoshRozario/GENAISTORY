@@ -88,7 +88,7 @@ export default function App() {
         )}
         
         {currentView === 'admin' && (
-          <AdminPanel />
+          <AdminPanelRefactored />
         )}
       </main>
     </div>
