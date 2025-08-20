@@ -1,0 +1,133 @@
+{
+  "id": "test-story-001",
+  "title": "The Mysterious Tavern",
+  "description": "A fantasy adventure beginning in a mysterious tavern where strange things happen.",
+  "genre": "fantasy",
+  "theme": "mystery",
+  "createdAt": "2025-08-20T04:29:41.822Z",
+  "lastPlayed": "2025-08-20T04:53:21.503Z",
+  "isActive": true,
+  "playerName": "Adventurer",
+  "characters": [
+    {
+      "id": "char-001",
+      "name": "Barkeep Magnus",
+      "description": "A gruff but kind tavern owner with knowing eyes and silver hair.",
+      "role": "npc",
+      "knownToPlayer": true,
+      "traits": [
+        "wise",
+        "secretive",
+        "helpful"
+      ],
+      "currentLocation": "The Crooked Crown Tavern",
+      "relationships": {},
+      "secrets": [
+        "Knows about the hidden cellar",
+        "Former adventurer"
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "id": "item-001",
+      "name": "Worn Leather Pouch",
+      "description": "A small leather pouch containing a few copper coins.",
+      "type": "container",
+      "quantity": 1,
+      "properties": {
+        "value": 5,
+        "capacity": 10
+      }
+    }
+  ],
+  "goals": [
+    {
+      "id": "goal-001",
+      "title": "Discover the tavern's secret",
+      "description": "Something mysterious is happening in this tavern. Find out what.",
+      "status": "active",
+      "progress": 0,
+      "knownToPlayer": true,
+      "requirements": [
+        "Talk to the barkeep",
+        "Explore the tavern"
+      ],
+      "rewards": [
+        "Experience",
+        "New story path"
+      ]
+    }
+  ],
+  "beats": [
+    {
+      "id": "beat-001",
+      "type": "introduction",
+      "title": "Arrival at the Tavern",
+      "description": "Player enters the mysterious tavern",
+      "status": "completed",
+      "triggers": [
+        "story_start"
+      ],
+      "consequences": [
+        "meet_barkeep",
+        "establish_setting"
+      ]
+    },
+    {
+      "id": "beat-002",
+      "type": "exploration",
+      "title": "First Investigation",
+      "description": "Player begins to explore and ask questions",
+      "status": "pending",
+      "triggers": [
+        "player_investigates"
+      ],
+      "consequences": [
+        "reveal_clue",
+        "npc_reaction"
+      ]
+    }
+  ],
+  "state": {
+    "currentLocation": "The Crooked Crown Tavern",
+    "worldState": {
+      "timeOfDay": "evening",
+      "weather": "stormy outside",
+      "tavernCrowded": true
+    },
+    "playerStats": {
+      "health": 100,
+      "energy": 80,
+      "experience": 0
+    },
+    "flags": {
+      "enteredTavern": true,
+      "spokeToBarkeep": false,
+      "discoveredSecret": false
+    },
+    "lastUpdateTimestamp": "2025-08-20T04:53:21.503Z"
+  },
+  "storyLog": [
+    {
+      "id": "log-001",
+      "timestamp": "2025-08-20T04:29:41.823Z",
+      "playerInput": null,
+      "content": "The storm drives you through the heavy wooden door of The Crooked Crown Tavern. Inside, flickering candlelight dances across weathered stone walls, and the air is thick with the scent of ale and mystery. The barkeep, a silver-haired man with knowing eyes, looks up from polishing a mug and nods in your direction. Rain patters against the diamond-paned windows as other patrons huddle over their drinks, speaking in hushed tones.",
+      "agentResponses": [],
+      "metadata": {
+        "generatedBy": "default_story_creation",
+        "location": "The Crooked Crown Tavern",
+        "npcsPresent": [
+          "Barkeep Magnus"
+        ],
+        "itemsVisible": [
+          "Worn Leather Pouch"
+        ]
+      }
+    }
+
+  ],
+  "lastSaved": "2025-08-20T04:53:21.503Z",
+  "version": "1.0"
+}

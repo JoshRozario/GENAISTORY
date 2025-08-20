@@ -12,17 +12,17 @@ export function ChatMessage({ message }: ChatMessageProps) {
   return (
     <div className={`flex ${isPlayer ? 'justify-end' : 'justify-start'}`}>
       <div
-        className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
+        className={`max-w-4xl px-6 py-4 rounded-lg ${
           isPlayer
             ? 'bg-blue-600 text-white'
             : 'bg-gray-100 text-gray-900'
         }`}
       >
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">
+        <div className="whitespace-pre-wrap text-base leading-relaxed">
           {message.content}
         </div>
         <div
-          className={`text-xs mt-1 ${
+          className={`text-sm mt-2 ${
             isPlayer ? 'text-blue-100' : 'text-gray-500'
           }`}
         >

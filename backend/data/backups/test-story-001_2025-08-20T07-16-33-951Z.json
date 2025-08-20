@@ -5,7 +5,7 @@
   "genre": "fantasy",
   "theme": "mystery",
   "createdAt": "2025-08-20T04:29:41.822Z",
-  "lastPlayed": "2025-08-20T07:16:33.951Z",
+  "lastPlayed": "2025-08-20T07:15:30.801Z",
   "isActive": true,
   "playerName": "Adventurer",
   "characters": [
@@ -106,7 +106,7 @@
       "spokeToBarkeep": false,
       "discoveredSecret": false
     },
-    "lastUpdateTimestamp": "2025-08-20T07:16:33.951Z"
+    "lastUpdateTimestamp": "2025-08-20T07:15:30.801Z"
   },
   "storyLog": [
     {
@@ -137,20 +137,8 @@
         "goalUpdates": [],
         "stateUpdates": {}
       }
-    },
-    {
-      "id": "0kj4t92hj",
-      "content": "Magnus pauses in his polishing, the worn rag stilling over the strange symbol carved into the dark wood. His knuckles whiten slightly around the tankard he holds. \"Eyes see more than they should in this place,\" he rumbles, his voice dropping to a near-whisper that somehow carries through the tavern's murmur. The candle flames gutter as if in agreement, casting shifting shadows that make the symbol seem to writhe beneath his hand. You notice how his gaze flicks toward the staircase behind the bar—a quick, almost imperceptible movement—before returning to meet yours.\n\n\"That mark's older than these stones,\" he continues, setting down the tankard with deliberate care. \"Carved when this place was built, back when folk knew better than to ask about things that don't concern them.\" His tone isn't unkind, but carries the weight of finality. Still, his eyes hold yours, and you sense he's measuring your resolve. From your worn leather pouch, you unconsciously finger the few copper coins within, wondering what price curiosity might carry here.\n\nThe tavern has fallen noticeably quieter, several patrons now conspicuously studying their drinks. Magnus leans forward slightly, the scent of aged whiskey and pine soap mingling as he lowers his voice further. \"Storm's still raging out there,\" he says, almost too quietly to hear. \"Might be you should finish your drink and find drier company.\" But his eyes tell a different story—they flick again toward the staircase, then back to you with clear intention.\n\nDo you press him for more information despite his warning, finish your drink as suggested, or perhaps find a way to investigate that staircase when his attention is elsewhere?",
-      "timestamp": "2025-08-20T07:16:33.950Z",
-      "playerInput": "Ask Magnus about the strange symbol on the bar",
-      "stateChanges": {
-        "inventoryChanges": [],
-        "characterUpdates": [],
-        "goalUpdates": [],
-        "stateUpdates": {}
-      }
     }
   ],
-  "lastSaved": "2025-08-20T07:16:33.951Z",
+  "lastSaved": "2025-08-20T07:15:30.802Z",
   "version": "1.0"
 }
