@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import StoryDashboard from './components/StoryDashboard';
 import StoryPlayer from './components/story/StoryPlayer';
-import AdminPanelRefactored from './components/admin/AdminPanelRefactored';
+import AdminPanel from './components/AdminPanel';
 
 type View = 'dashboard' | 'player' | 'admin';
 
