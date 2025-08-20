@@ -80,9 +80,9 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
   }
 
   return (
-    <div className="flex bg-gray-50 min-h-full">
+    <div className="flex bg-gray-50" style={{ height: 'calc(100vh - 4rem)' }}>
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
           <div className="flex items-center justify-between">
