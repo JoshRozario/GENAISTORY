@@ -113,12 +113,27 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
                 <ChatMessage key={message.id} message={message} />
               ))}
               
+              {/* Show pending player message immediately */}
+              {pendingMessage && (
+                <div className="flex justify-end">
+                  <div className="max-w-4xl px-6 py-4 rounded-lg bg-blue-600 text-white">
+                    <div className="whitespace-pre-wrap text-base leading-relaxed">
+                      {pendingMessage}
+                    </div>
+                    <div className="text-blue-100 text-sm mt-2">
+                      Sending...
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <div ref={storyEndRef} />
+              
+              {/* Move generation status to bottom */}
               <StoryGenerationStatus 
                 isGenerating={isGenerating} 
                 currentStep={generationStep} 
               />
-              
-              <div ref={storyEndRef} />
             </div>
           </div>
         </div>
