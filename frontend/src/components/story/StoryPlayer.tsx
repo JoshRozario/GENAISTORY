@@ -14,7 +14,7 @@ interface StoryPlayerProps {
   onBack: () => void;
 }
 
-export default function StoryPlayerRefactored({ storyId, onBack }: StoryPlayerProps) {
+export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
   const [playerInput, setPlayerInput] = useState('');
   const storyEndRef = useRef<HTMLDivElement>(null);
 

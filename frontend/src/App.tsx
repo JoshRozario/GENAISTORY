@@ -81,7 +81,7 @@ export default function App() {
         )}
         
         {currentView === 'player' && currentStoryId && (
-          <StoryPlayerRefactored 
+          <StoryPlayer 
             storyId={currentStoryId} 
             onBack={handleBackToDashboard}
           />
