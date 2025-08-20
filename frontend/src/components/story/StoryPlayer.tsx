@@ -80,9 +80,9 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 p-4 flex-shrink-0">
           <div className="flex items-center justify-between">
@@ -100,24 +100,26 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 pb-0">
-          <div className="max-w-4xl mx-auto space-y-4 pb-4">
-            {story.conversationHistory.map((message) => (
-              <ChatMessage key={message.id} message={message} />
-            ))}
-            
-            <StoryGenerationStatus 
-              isGenerating={isGenerating} 
-              currentStep={generationStep} 
-            />
-            
-            <div ref={storyEndRef} />
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="p-4">
+            <div className="max-w-4xl mx-auto space-y-4">
+              {story.conversationHistory.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+              
+              <StoryGenerationStatus 
+                isGenerating={isGenerating} 
+                currentStep={generationStep} 
+              />
+              
+              <div ref={storyEndRef} />
+            </div>
           </div>
         </div>
 
-        {/* Input Area - Sticky at bottom */}
+        {/* Input Area - Fixed at bottom */}
         <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
-          <div className="max-w-4xl mx-auto space-y-4">
+          <div className="max-w-4xl mx-auto space-y-3">
             <ActionSuggestions
               actions={suggestedActions}
               onActionClick={handleQuickAction}
