@@ -14,6 +14,9 @@ export type Character = {
   attributes: Record<string, any>;
   relationships: Record<string, string>; // characterId -> relationship type
   secrets: string[]; // hidden from player
+  role?: string;
+  traits?: string[];
+  currentLocation?: string;
 };
 
 export type InventoryItem = {
@@ -42,6 +45,10 @@ export type StoryBeat = {
   playerVisible: boolean;
   order: number;
   requirements?: string[]; // required goals/events
+  type?: string;
+  status?: string;
+  triggers?: string[];
+  consequences?: string[];
 };
 
 export type StoryState = {
@@ -67,19 +74,22 @@ export type Story = {
   state: StoryState;
   storyLog: StorySegment[];
   isActive: boolean;
+  playerName?: string;
 };
 
 export type StorySegment = {
   id: string;
   content: string;
   timestamp: string;
-  playerInput?: string;
-  stateChanges: {
+  playerInput?: string | null;
+  stateChanges?: {
     inventoryChanges?: InventoryItem[];
     characterUpdates?: Partial<Character>[];
     goalUpdates?: Partial<Goal>[];
     stateUpdates?: Partial<StoryState>;
   };
+  agentResponses?: any[];
+  metadata?: Record<string, any>;
 };
 
 // Multi-Agent System Types

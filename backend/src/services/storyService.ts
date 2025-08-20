@@ -1,13 +1,46 @@
 import { Story } from '../../../shared/types';
 import { StoryOrchestrator } from './storyOrchestrator';
+import { StorageService } from './storageService';
 
 export class StoryService {
   private stories: Map<string, Story> = new Map();
   private orchestrator: StoryOrchestrator;
+  private storageService: StorageService;
 
   constructor() {
     this.orchestrator = new StoryOrchestrator();
-    this.initializeDefaultStory();
+    this.storageService = new StorageService();
+    this.initialize();
+  }
+
+  /**
+   * Initialize service by loading existing stories and creating default if needed
+   */
+  private async initialize(): Promise<void> {
+    await this.loadAllStoriesFromDisk();
+    
+    // Create default story if no stories exist
+    if (this.stories.size === 0) {
+      await this.initializeDefaultStory();
+    }
+  }
+
+  /**
+   * Load all stories from persistent storage
+   */
+  private async loadAllStoriesFromDisk(): Promise<void> {
+    try {
+      const stories = await this.storageService.loadAllStories();
+      this.stories.clear();
+      
+      for (const story of stories) {
+        this.stories.set(story.id, story);
+      }
+      
+      console.log(`Loaded ${stories.length} stories from persistent storage`);
+    } catch (error) {
+      console.error('Failed to load stories from storage:', error);
+    }
   }
 
   /**
@@ -34,7 +67,32 @@ export class StoryService {
           traits: ['wise', 'secretive', 'helpful'],
           currentLocation: 'The Crooked Crown Tavern',
           relationships: {},
-          secrets: ['Knows about the hidden cellar', 'Former adventurer']
+          secrets: ['Knows about the hidden cellar', 'Former adventurer'],
+          attributes: {}
+        },
+        {
+          id: 'char-002',
+          name: 'Elara the Mysterious',
+          description: 'A hooded figure who occasionally visits the tavern late at night. Nobody knows her true purpose.',
+          role: 'npc',
+          knownToPlayer: false,
+          traits: ['mysterious', 'secretive', 'dangerous'],
+          currentLocation: 'Unknown',
+          relationships: {},
+          secrets: ['She is actually a spy for the royal court', 'Seeking the same treasure the player might find'],
+          attributes: {}
+        },
+        {
+          id: 'char-003',
+          name: 'Old Tom',
+          description: 'A weathered sailor who sits in the corner nursing ales and telling tales of the sea.',
+          role: 'npc',
+          knownToPlayer: false,
+          traits: ['talkative', 'experienced', 'drunk'],
+          currentLocation: 'The Crooked Crown Tavern',
+          relationships: {},
+          secrets: ['Has a map to a sunken treasure ship', 'Lost his crew to sea monsters'],
+          attributes: {}
         }
       ],
       inventory: [
@@ -119,6 +177,7 @@ export class StoryService {
     };
 
     this.stories.set(defaultStory.id, defaultStory);
+    await this.storageService.saveStory(defaultStory);
   }
 
   /**
@@ -134,6 +193,7 @@ export class StoryService {
   }): Promise<Story> {
     const story = await this.orchestrator.createNewStory(config);
     this.stories.set(story.id, story);
+    await this.storageService.saveStory(story);
     return story;
   }
 
@@ -182,6 +242,7 @@ export class StoryService {
     if (result.success && result.updatedStory) {
       // Update stored story
       this.stories.set(storyId, result.updatedStory);
+      await this.storageService.saveStory(result.updatedStory);
       
       return {
         success: true,
@@ -226,7 +287,7 @@ export class StoryService {
   /**
    * Update story (admin only)
    */
-  updateStory(storyId: string, updates: Partial<Story>): Story | null {
+  async updateStory(storyId: string, updates: Partial<Story>): Promise<Story | null> {
     const story = this.getStory(storyId);
     
     if (!story) {
@@ -235,6 +296,7 @@ export class StoryService {
 
     const updatedStory = { ...story, ...updates };
     this.stories.set(storyId, updatedStory);
+    await this.storageService.saveStory(updatedStory);
     
     return updatedStory;
   }
@@ -242,14 +304,18 @@ export class StoryService {
   /**
    * Delete story
    */
-  deleteStory(storyId: string): boolean {
-    return this.stories.delete(storyId);
+  async deleteStory(storyId: string): Promise<boolean> {
+    const deleted = this.stories.delete(storyId);
+    if (deleted) {
+      await this.storageService.deleteStory(storyId);
+    }
+    return deleted;
   }
 
   /**
    * Archive story (set inactive)
    */
-  archiveStory(storyId: string): Story | null {
+  async archiveStory(storyId: string): Promise<Story | null> {
     const story = this.getStory(storyId);
     
     if (!story) {
@@ -258,6 +324,7 @@ export class StoryService {
 
     story.isActive = false;
     this.stories.set(storyId, story);
+    await this.storageService.saveStory(story);
     
     return story;
   }
@@ -265,7 +332,7 @@ export class StoryService {
   /**
    * Reset story to beginning
    */
-  resetStory(storyId: string): Story | null {
+  async resetStory(storyId: string): Promise<Story | null> {
     const story = this.getStory(storyId);
     
     if (!story) {
@@ -297,6 +364,7 @@ export class StoryService {
     };
 
     this.stories.set(storyId, resetStory);
+    await this.storageService.saveStory(resetStory);
     return resetStory;
   }
 

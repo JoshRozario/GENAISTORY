@@ -27,6 +27,7 @@ interface PlayerView {
 export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
   const [playerInput, setPlayerInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStep, setGenerationStep] = useState('');
   const [showInventory, setShowInventory] = useState(false);
   const [showCharacters, setShowCharacters] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
@@ -90,7 +91,47 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
     
     setIsGenerating(true);
     
+    // Simulate the magical story generation process with flavor text
+    const generationSteps = [
+      "🔮 The crystal ball swirls with mystical energy...",
+      "📜 Ancient scrolls unfurl, revealing your fate...",
+      "⚡ Magic sparks as reality bends to your will...",
+      "🎭 The storyteller weaves threads of destiny...",
+      "🌟 Stars align to chart your next adventure...",
+      "🗡️ The winds of change carry whispers of danger...",
+      "🏰 Distant towers echo with your legend...",
+      "🐉 Ancient powers stir in response to your actions..."
+    ];
+    
+    const validationSteps = [
+      "🧙‍♂️ The wise sage reviews the tale for consistency...",
+      "📚 Checking the chronicles for contradictions...",
+      "⚖️ Balancing the scales of narrative truth...",
+      "🔍 Ensuring the story threads remain untangled..."
+    ];
+    
+    const stateSteps = [
+      "🗺️ Redrawing the map of your journey...",
+      "👑 Updating the royal records of your deeds...",
+      "💎 Cataloging treasures in your possession...",
+      "🤝 Recording new allies and enemies...",
+      "📖 Inscribing your tale in the Book of Adventures..."
+    ];
+    
     try {
+      // Step 1: Story Generation
+      setGenerationStep(generationSteps[Math.floor(Math.random() * generationSteps.length)]);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Step 2: Validation
+      setGenerationStep(validationSteps[Math.floor(Math.random() * validationSteps.length)]);
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      // Step 3: State Updates
+      setGenerationStep(stateSteps[Math.floor(Math.random() * stateSteps.length)]);
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      // Actual API call
       const response = await fetch(`/api/stories/${storyId}/continue`, {
         method: 'POST',
         headers: {
@@ -101,16 +142,21 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
       
       if (response.ok) {
         const result = await response.json();
+        setGenerationStep("✨ Your adventure continues...");
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         setPlayerInput('');
         refetch(); // Refresh the story data to get updated conversation history
       } else {
         console.error('Failed to continue story');
+        setGenerationStep("💀 The fates have conspired against us...");
       }
     } catch (error) {
       console.error('Error continuing story:', error);
+      setGenerationStep("⚠️ A disturbance in the magical realm...");
     } finally {
       setIsGenerating(false);
+      setGenerationStep('');
     }
   };
 
@@ -226,6 +272,19 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
                   ))}
                 </div>
               )}
+              
+              {/* Generation Progress Indicator */}
+              {isGenerating && generationStep && (
+                <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <div className="animate-spin">🌟</div>
+                    <div className="text-sm text-purple-800 font-medium">
+                      {generationStep}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div ref={storyEndRef} />
             </div>
             
@@ -274,7 +333,7 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Generating...
+                        Weaving...
                       </>
                     ) : (
                       'Continue'
@@ -307,8 +366,45 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
                   <div className="space-y-2">
                     {story.inventory.map((item, index) => (
                       <div key={index} className="border-b border-gray-100 pb-2 last:border-0">
-                        <div className="font-medium text-sm">{item.name} ({item.quantity})</div>
-                        <div className="text-xs text-gray-600">{item.description}</div>
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">{item.name} ({item.quantity})</div>
+                            <div className="text-xs text-gray-600">{item.description}</div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              <span className="inline-block bg-gray-100 px-1 rounded text-xs capitalize">
+                                {item.type}
+                              </span>
+                              {item.properties && Object.keys(item.properties).length > 0 && (
+                                <details className="inline ml-1">
+                                  <summary className="cursor-pointer text-blue-600 hover:text-blue-800 text-xs">
+                                    Info ↓
+                                  </summary>
+                                  <div className="mt-1 ml-2 space-y-1 bg-blue-50 p-2 rounded text-xs">
+                                    {Object.entries(item.properties).map(([key, value]) => (
+                                      <div key={key} className="flex justify-between">
+                                        <span className="font-medium capitalize text-blue-800">
+                                          {key === 'value' ? '💰 Value:' : 
+                                           key === 'damage' ? '⚔️ Damage:' :
+                                           key === 'capacity' ? '📦 Capacity:' :
+                                           key === 'durability' ? '🔧 Durability:' :
+                                           key === 'weight' ? '⚖️ Weight:' :
+                                           key === 'effect' ? '✨ Effect:' :
+                                           `${key}:`}
+                                        </span>
+                                        <span className="text-blue-700">
+                                          {typeof value === 'string' ? value : JSON.stringify(value)}
+                                          {key === 'weight' && typeof value === 'number' ? ' lbs' :
+                                           key === 'durability' && typeof value === 'number' ? '/100' :
+                                           key === 'value' && typeof value === 'number' ? ' gold' : ''}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </details>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>

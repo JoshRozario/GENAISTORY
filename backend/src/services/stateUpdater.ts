@@ -410,11 +410,20 @@ export class StateUpdater {
   private guessItemType(itemName: string): 'weapon' | 'tool' | 'consumable' | 'key' | 'misc' {
     const nameLower = itemName.toLowerCase();
     
-    if (/sword|blade|dagger|bow|axe|mace|spear/.test(nameLower)) return 'weapon';
-    if (/potion|elixir|food|bread|water/.test(nameLower)) return 'consumable';
-    if (/key|lockpick/.test(nameLower)) return 'key';
-    if (/tool|rope|hammer|shovel/.test(nameLower)) return 'tool';
+    // Weapons
+    if (/sword|blade|dagger|bow|axe|mace|spear|club|staff|wand/.test(nameLower)) return 'weapon';
     
+    // Consumables (food, drinks, potions, etc.)
+    if (/potion|elixir|food|bread|water|ale|beer|wine|drink|meal|soup|stew|fruit|meat|cheese/.test(nameLower)) return 'consumable';
+    if (/breath|sip|gulp|bottle|flask|vial/.test(nameLower)) return 'consumable';
+    
+    // Keys and unlocking items
+    if (/key|lockpick|pass|card/.test(nameLower)) return 'key';
+    
+    // Tools and equipment
+    if (/tool|rope|hammer|shovel|pick|lantern|torch|map|compass|bag|pack|pouch/.test(nameLower)) return 'tool';
+    
+    // Default to misc for everything else
     return 'misc';
   }
 
@@ -422,8 +431,24 @@ export class StateUpdater {
     const mentions: string[] = [];
     const sentences = content.split(/[.!?]+/);
     
+    // Create variations of the character name to match
+    const nameVariations = [
+      characterName.toLowerCase(),
+      characterName.toLowerCase().split(' ')[0], // First name only
+      characterName.toLowerCase().split(' ').pop() || characterName.toLowerCase() // Last name only
+    ];
+    
     sentences.forEach(sentence => {
-      if (sentence.toLowerCase().includes(characterName.toLowerCase())) {
+      const sentenceLower = sentence.toLowerCase();
+      
+      // Check if any variation of the character name is mentioned
+      const isMentioned = nameVariations.some(nameVar => {
+        // Use word boundaries to avoid partial matches
+        const regex = new RegExp(`\\b${nameVar.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+        return regex.test(sentenceLower);
+      });
+      
+      if (isMentioned) {
         mentions.push(sentence.trim());
       }
     });
@@ -432,15 +457,33 @@ export class StateUpdater {
   }
 
   private impliesCharacterIntroduction(content: string, characterName: string): boolean {
+    const contentLower = content.toLowerCase();
+    const nameLower = characterName.toLowerCase();
+    const firstName = nameLower.split(' ')[0];
+    
+    // Introduction patterns - more flexible matching
     const introPatterns = [
-      `you meet ${characterName}`,
-      `${characterName} introduces`,
-      `you encounter ${characterName}`
+      `you meet ${nameLower}`,
+      `you meet ${firstName}`,
+      `${nameLower} introduces`,
+      `${firstName} introduces`,
+      `you encounter ${nameLower}`,
+      `you encounter ${firstName}`,
+      `you see ${nameLower}`,
+      `you see ${firstName}`,
+      `${nameLower} approaches`,
+      `${firstName} approaches`,
+      `${nameLower} speaks`,
+      `${firstName} speaks`,
+      `${nameLower} says`,
+      `${firstName} says`,
+      `a person named ${nameLower}`,
+      `a person named ${firstName}`,
+      `someone called ${nameLower}`,
+      `someone called ${firstName}`
     ];
     
-    return introPatterns.some(pattern => 
-      content.toLowerCase().includes(pattern.toLowerCase())
-    );
+    return introPatterns.some(pattern => contentLower.includes(pattern));
   }
 
   private extractCharacterAttributes(content: string, characterName: string): Record<string, any> {
