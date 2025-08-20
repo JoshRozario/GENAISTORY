@@ -3,10 +3,14 @@ import React, { useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import { useAdminActions } from '../hooks/admin/useAdminActions';
 import { StorySelector } from './admin/StorySelector';
-import { TabNavigation } from './admin/TabNavigation'
-import { StoryOverview } from './admin/StoryOverview'
+import { TabNavigation } from './admin/TabNavigation';
+import { StoryOverview } from './admin/StoryOverview';
+import { CharacterManagement } from './admin/CharacterManagement';
+import { InventoryManagement } from './admin/InventoryManagement';
+import { GoalsManagement } from './admin/GoalsManagement';
+import { BeatsManagement } from './admin/BeatsManagement';
 import { LoadingSpinner } from './ui/LoadingSpinner';
-import type { Story } from '../../src/types/story';
+import type { Story } from '../types/story';
 
 type AdminTab = 'overview' | 'characters' | 'inventory' | 'goals' | 'beats' | 'state';
 
