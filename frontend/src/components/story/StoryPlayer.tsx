@@ -50,11 +50,16 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
     e.preventDefault();
     if (!playerInput.trim() || isGenerating) return;
 
+    const message = playerInput.trim();
+    setPendingMessage(message);
+    setPlayerInput('');
+
     try {
-      await submitAction(playerInput);
-      setPlayerInput('');
+      await submitAction(message);
+      setPendingMessage('');
     } catch (error) {
       console.error('Failed to continue story:', error);
+      setPendingMessage('');
     }
   };
 
