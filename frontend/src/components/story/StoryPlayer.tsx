@@ -100,9 +100,9 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto min-h-0">
-          <div className="p-4">
-            <div className="max-w-4xl mx-auto space-y-4">
+        <div className="flex-1 overflow-y-auto min-h-0 pb-6">
+          <div className="px-6 pt-6">
+            <div className="max-w-4xl mx-auto space-y-6">
               {story.conversationHistory.map((message) => (
                 <ChatMessage key={message.id} message={message} />
               ))}
@@ -117,32 +117,34 @@ export default function StoryPlayer({ storyId, onBack }: StoryPlayerProps) {
           </div>
         </div>
 
-        {/* Input Area - Fixed at bottom */}
-        <div className="bg-white border-t border-gray-200 p-4 flex-shrink-0">
-          <div className="max-w-4xl mx-auto space-y-3">
+        {/* Input Area */}
+        <div className="border-t border-gray-200 bg-white px-6 py-4 flex-shrink-0">
+          <div className="max-w-4xl mx-auto">
             <ActionSuggestions
               actions={suggestedActions}
               onActionClick={handleQuickAction}
               disabled={isGenerating}
             />
             
-            <form onSubmit={handleContinueStory} className="flex space-x-2">
-              <input
-                type="text"
-                value={playerInput}
-                onChange={(e) => setPlayerInput(e.target.value)}
-                placeholder="What do you do next?"
-                disabled={isGenerating}
-                className="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              />
-              <button
-                type="submit"
-                disabled={isGenerating || !playerInput.trim()}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isGenerating ? 'Generating...' : 'Continue'}
-              </button>
-            </form>
+            <div className="mt-4">
+              <form onSubmit={handleContinueStory} className="flex gap-3">
+                <input
+                  type="text"
+                  value={playerInput}
+                  onChange={(e) => setPlayerInput(e.target.value)}
+                  placeholder="What do you do next?"
+                  disabled={isGenerating}
+                  className="flex-1 min-w-0 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 text-sm"
+                />
+                <button
+                  type="submit"
+                  disabled={isGenerating || !playerInput.trim()}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm transition-colors"
+                >
+                  {isGenerating ? 'Generating...' : 'Continue'}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
